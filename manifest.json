@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "SkinBaron Arbitrage Helper",
+  "version": "1.0",
+  "description": "Calculate arbitrage opportunities on SkinBaron with fee calculations",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://skinbaron.de/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://skinbaron.de/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
