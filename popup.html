@@ -61,6 +61,64 @@
       font-weight: 700;
     }
     
+    /* Toggle Switch */
+    .toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .toggle-label {
+      font-weight: 600;
+      font-size: 14px;
+      flex: 1;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #4ade80;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
     button {
       width: 100%;
       padding: 12px;
@@ -107,7 +165,7 @@
     .info {
       font-size: 12px;
       opacity: 0.9;
-      margin-top: 12px;
+      margin-top: 8px;
       line-height: 1.5;
     }
     
@@ -123,23 +181,37 @@
   <h1>📊 SkinBaron Arbitrage</h1>
   
   <div class="section">
+    <div class="toggle-container">
+      <span class="toggle-label">🔮 Enable Oracle Pricing</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="oracleToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="info">
+      Fetch real-time market & historic data from SkinBaron API
+    </div>
+  </div>
+  
+  <div class="section">
     <label for="feeInput">SkinBaron Fee Percentage</label>
     <div class="input-group">
       <input type="number" id="feeInput" min="0" max="100" step="0.1" value="8">
       <span class="percent-sign">%</span>
     </div>
     <div class="info">
-      Standard SkinBaron fee is 8%. Adjust if you have a different fee rate.
+      Standard SkinBaron fee is 8%
     </div>
   </div>
+  
   <div class="section">
-    <label for="profitInput">Profit Level</label>
+    <label for="profitInput">Desired Profit Level</label>
     <div class="input-group">
-      <input type="number" id="profitInput" min="0" max="100" step="0.1" value="8">
+      <input type="number" id="profitInput" min="0" max="100" step="0.1" value="10">
       <span class="percent-sign">%</span>
     </div>
     <div class="info">
-      Standard Profit Level is 10%
+      Minimum profit target for Min. Sell price calculation
     </div>
   </div>
   
@@ -148,7 +220,7 @@
   <div id="status" class="status"></div>
   
   <div class="footer">
-    Open any item on SkinBaron to see arbitrage calculations
+    Luti Capital Extension
   </div>
   
   <script src="popup.js"></script>
