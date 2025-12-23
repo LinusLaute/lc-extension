@@ -1,35 +1,56 @@
 // Popup script for SkinBaron Arbitrage Helper
 
 const feeInput = document.getElementById('feeInput');
+const profitInput = document.getElementById('profitInput');
+const oracleToggle = document.getElementById('oracleToggle');
 const saveBtn = document.getElementById('saveBtn');
 const status = document.getElementById('status');
 
-// Load saved fee on popup open
-chrome.storage.sync.get(['feePercentage'], (result) => {
+// Load saved settings on popup open
+chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'oracleEnabled'], (result) => {
   if (result.feePercentage) {
     feeInput.value = result.feePercentage;
   }
+  if (result.profitPercentage) {
+    profitInput.value = result.profitPercentage;
+  }
+  if (typeof result.oracleEnabled === 'boolean') {
+    oracleToggle.checked = result.oracleEnabled;
+  }
 });
 
-// Save fee when button clicked
+// Save settings when button clicked
 saveBtn.addEventListener('click', () => {
   const feeValue = parseFloat(feeInput.value);
+  const profitValue = parseFloat(profitInput.value);
+  const oracleEnabled = oracleToggle.checked;
   
   if (isNaN(feeValue) || feeValue < 0 || feeValue > 100) {
     showStatus('Please enter a valid fee between 0 and 100', 'error');
     return;
   }
   
+  if (isNaN(profitValue) || profitValue < 0 || profitValue > 100) {
+    showStatus('Please enter a valid profit between 0 and 100', 'error');
+    return;
+  }
+  
   // Save to chrome storage
-  chrome.storage.sync.set({ feePercentage: feeValue }, () => {
-    showStatus('Settings saved! Refresh the page to see changes.', 'success');
+  chrome.storage.sync.set({ 
+    feePercentage: feeValue,
+    profitPercentage: profitValue,
+    oracleEnabled: oracleEnabled
+  }, () => {
+    showStatus('Settings saved! Changes applied.', 'success');
     
     // Send message to content script to update
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]) {
         chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'updateFee',
-          fee: feeValue
+          action: 'updateSettings',
+          fee: feeValue,
+          profit: profitValue,
+          oracleEnabled: oracleEnabled
         });
       }
     });
@@ -38,6 +59,12 @@ saveBtn.addEventListener('click', () => {
 
 // Allow saving with Enter key
 feeInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    saveBtn.click();
+  }
+});
+
+profitInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     saveBtn.click();
   }
