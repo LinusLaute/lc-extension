@@ -24,6 +24,12 @@
       padding: 16px;
       margin-bottom: 16px;
       backdrop-filter: blur(10px);
+      transition: opacity 0.3s;
+    }
+    
+    .section.disabled {
+      opacity: 0.5;
+      pointer-events: none;
     }
     
     label {
@@ -169,6 +175,18 @@
       line-height: 1.5;
     }
     
+    .badge {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+    
     .footer {
       text-align: center;
       margin-top: 20px;
@@ -188,8 +206,18 @@
         <span class="slider"></span>
       </label>
     </div>
-    <div class="info">
-      Fetch real-time market & historic data from SkinBaron API
+  </div>
+  
+  <div class="section" id="historicSection">
+    <div class="toggle-container">
+      <span class="toggle-label">
+        📊 Include Historic Data
+        <span class="badge">Slower</span>
+      </span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="historicToggle">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
   
@@ -199,9 +227,6 @@
       <input type="number" id="feeInput" min="0" max="100" step="0.1" value="8">
       <span class="percent-sign">%</span>
     </div>
-    <div class="info">
-      Standard SkinBaron fee is 8%
-    </div>
   </div>
   
   <div class="section">
@@ -209,9 +234,6 @@
     <div class="input-group">
       <input type="number" id="profitInput" min="0" max="100" step="0.1" value="10">
       <span class="percent-sign">%</span>
-    </div>
-    <div class="info">
-      Minimum profit target for Min. Sell price calculation
     </div>
   </div>
   

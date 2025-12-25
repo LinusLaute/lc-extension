@@ -100,7 +100,7 @@
 }
 
 .arb-label-small {
-  font-size: 11px;
+  font-size: 15px;
   opacity: 0.9;
 }
 
@@ -186,6 +186,31 @@
 .arb-verdict.neutral-deal {
   background: rgba(255, 255, 255, 0.2);
   color: #fef3c7;
+}
+
+.arb-historic-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.arb-historic-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.arb-historic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .arb-footer {
