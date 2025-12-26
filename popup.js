@@ -1,20 +1,25 @@
 // Popup script for SkinBaron Arbitrage Helper
-
 const feeInput = document.getElementById('feeInput');
 const profitInput = document.getElementById('profitInput');
+const itemsInput = document.getElementById('itemsInput')
+
 const oracleToggle = document.getElementById('oracleToggle');
 const historicToggle = document.getElementById('historicToggle');
+
 const historicSection = document.getElementById('historicSection');
 const saveBtn = document.getElementById('saveBtn');
 const status = document.getElementById('status');
 
 // Load saved settings on popup open
-chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'oracleEnabled', 'historicEnabled'], (result) => {
+chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'gridItems', 'oracleEnabled', 'historicEnabled'], (result) => {
   if (result.feePercentage) {
     feeInput.value = result.feePercentage;
   }
   if (result.profitPercentage) {
     profitInput.value = result.profitPercentage;
+  }
+  if (result.gridItems) {
+    itemsInput.value = result.gridItems;
   }
   if (typeof result.oracleEnabled === 'boolean') {
     oracleToggle.checked = result.oracleEnabled;
@@ -44,6 +49,7 @@ function updateHistoricSection() {
 saveBtn.addEventListener('click', () => {
   const feeValue = parseFloat(feeInput.value);
   const profitValue = parseFloat(profitInput.value);
+  const gridItems = parseInt(itemsInput.value);
   const oracleEnabled = oracleToggle.checked;
   const historicEnabled = oracleToggle.checked ? historicToggle.checked : false;
   
@@ -61,6 +67,7 @@ saveBtn.addEventListener('click', () => {
   chrome.storage.sync.set({ 
     feePercentage: feeValue,
     profitPercentage: profitValue,
+    gridItems: gridItems,
     oracleEnabled: oracleEnabled,
     historicEnabled: historicEnabled
   }, () => {
@@ -73,6 +80,7 @@ saveBtn.addEventListener('click', () => {
           action: 'updateSettings',
           fee: feeValue,
           profit: profitValue,
+          gridItems: gridItems,
           oracleEnabled: oracleEnabled,
           historicEnabled: historicEnabled
         });
@@ -89,6 +97,12 @@ feeInput.addEventListener('keypress', (e) => {
 });
 
 profitInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    saveBtn.click();
+  }
+});
+
+itemsInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     saveBtn.click();
   }

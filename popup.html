@@ -196,7 +196,7 @@
   </style>
 </head>
 <body>
-  <h1>📊 SkinBaron Arbitrage</h1>
+  <h1>SkinBaron Arbitrage Extension, by LC</h1>
   
   <div class="section">
     <div class="toggle-container">
@@ -236,11 +236,16 @@
       <span class="percent-sign">%</span>
     </div>
   </div>
+
+  <div class="section">
+    <label for="itemsInput">Num of Items scanned in Grid</label>
+    <div class="input-group">
+      <input type="number" id="itemsInput" min="3" max="100" step="0.1" value="24">
+    </div>
+  </div>
   
   <button id="saveBtn">Save Settings</button>
-  
-  <div id="status" class="status"></div>
-  
+  <div id="status" class="status"></div>  
   <div class="footer">
     Luti Capital Extension
   </div>

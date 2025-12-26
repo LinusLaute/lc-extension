@@ -5,14 +5,18 @@ let feePercentage = 8;
 let profitPercentage = 10;
 let oracleEnabled = true;
 let historicEnabled = false;
+let gridItems = 24
 
 // Load saved settings from storage
-chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'oracleEnabled', 'historicEnabled'], (result) => {
+chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'gridItems', 'oracleEnabled', 'historicEnabled'], (result) => {
   if (result.feePercentage) {
     feePercentage = result.feePercentage;
   }
   if (result.profitPercentage) {
     profitPercentage = result.profitPercentage;
+  }
+  if (result.gridItems) {
+    gridItems = result.gridItems;
   }
   if (typeof result.oracleEnabled === 'boolean') {
     oracleEnabled = result.oracleEnabled;
@@ -378,6 +382,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (typeof request.profit === 'number') {
       profitPercentage = request.profit;
     }
+    if (typeof request.gridItems === 'number') {
+      gridItems = request.gridItems;
+    }
     if (typeof request.oracleEnabled === 'boolean') {
       oracleEnabled = request.oracleEnabled;
     }
@@ -393,5 +400,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     
     sendResponse({ success: true });
     return true;
+  }
+});
+
+// Call grid scanner if on grid page
+chrome.storage.sync.get(['feePercentage', 'profitPercentage', 'oracleEnabled'], (result) => {
+  if (typeof initGridScanner === 'function') {
+    initGridScanner({
+      feePercentage: result.feePercentage || 8,
+      profitPercentage: result.profitPercentage || 10,
+      oracleEnabled: result.oracleEnabled !== false
+    },
+    gridItems
+  );
   }
 });
