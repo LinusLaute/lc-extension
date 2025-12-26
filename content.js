@@ -58,7 +58,7 @@ function extractPrice() {
   const match = text.match(/([0-9,.]+)/);
 
   if (match) {
-    return parseFloat(match[0].replace(/,/g, ''));
+    return parseFloat(match[0].replace(/,/g, '.')); // handles german notation with comma instead of dot
   }
 
   return null;

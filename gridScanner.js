@@ -3,6 +3,9 @@
 
 console.log('🚀 Grid Scanner loaded');
 
+// Prevent duplicate scans when observing dynamic page changes.
+// We mark the body with `data-grid-scanner-observed` once we've scheduled a scan.
+
 
 // ===== DETECTION =====
 function isGridPage() {
@@ -190,20 +193,37 @@ function initGridScanner(settings = {}, numItems) {
   if (settings.feePercentage) feePercentage = settings.feePercentage;
   if (settings.profitPercentage) profitPercentage = settings.profitPercentage;
   if (typeof settings.oracleEnabled === 'boolean') oracleEnabled = settings.oracleEnabled;
-  
-  console.log('Grid Scanner initialized with settings:', {
-    feePercentage,
-    profitPercentage,
-    oracleEnabled
-  });
-  
-  // Auto-start scan after small delay
-  if (isGridPage()) {
-    console.log('Grid page detected, starting scan in 2s...');
+
+  // Auto-start scan after small delay if grid is present now,
+  // otherwise observe the document for the grid being inserted.
+  const isGrid = isGridPage();
+  console.log('isGrid:', isGrid);
+
+  const scheduleScan = () => {
+    if (document.body.dataset.gridScannerObserved) return;
+    document.body.dataset.gridScannerObserved = '1';
+    console.log('Grid page detected, starting scan in 2s...', numItems);
     setTimeout(() => {
       scanItemList(numItems); // Scan first N items
     }, 2000);
+  };
+
+  if (isGrid) {
+    scheduleScan();
+    return;
   }
+
+  const observer = new MutationObserver((mutations, obs) => {
+    if (isGridPage()) {
+      scheduleScan();
+      obs.disconnect();
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 }
 
 // ===== EXPORTS (for integration) =====
