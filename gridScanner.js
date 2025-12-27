@@ -19,11 +19,18 @@ function extractItemData(itemElement) {
   const skinEl = itemElement.querySelector('.lName.big');
   const wearEl = itemElement.querySelector('.exteriorName');
   const priceEl = itemElement.querySelector('.price.item');
-  
+
+  const souvenirEl = itemElement.querySelector('.badge-wrapper.souvenir');
+  const stattrakEl = itemElement.querySelector('.badge-wrapper.stattrak');
+
   const weapon = weaponEl?.textContent.trim();
   const skin = skinEl?.textContent.trim();
   const wearRaw = wearEl?.textContent.trim();
   const priceRaw = priceEl?.textContent.trim();
+
+  // Check if StatTrak or Souvenir (assigns boolean)
+  const isStatTrak = stattrakEl !== null;
+  const isSouvenir = souvenirEl !== null;
   
   // Parse price
   const priceMatch = priceRaw?.match(/€\s*([0-9,]+\.?\d*)/);
@@ -46,7 +53,9 @@ function extractItemData(itemElement) {
     element: itemElement,
     name: `${weapon} | ${skin}`,
     wear: wear,
-    price: price
+    price: price,
+    isStatTrak: isStatTrak,
+    isSouvenir: isSouvenir
   };
 }
 
@@ -103,7 +112,8 @@ async function calculateItemState(itemData) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: itemData.name,
-        wear: itemData.wear
+        wear: itemData.wear,
+        stattrak: itemData.isStatTrak
       })
     });
     
@@ -171,6 +181,12 @@ async function scanItemList(maxItems) {
       colorItemBackground(item, 'skip');
       continue;
     }
+
+    if (itemData.isSouvenir) {
+      console.log('⚠️ Souvenir item - SKIP');
+      colorItemBackground(item, 'skip');
+      continue;
+    }
     
     // Analyze with Oracle
     const result = await calculateItemState(itemData);
@@ -190,6 +206,10 @@ async function scanItemList(maxItems) {
 // ===== INIT FUNCTION (called from main content.js) =====
 function initGridScanner(settings = {}, numItems) {
   // Update settings if provided
+  if (!oracleEnabled) {
+    console.log('❌ Oracle disabled');
+    return;
+  }
   if (settings.feePercentage) feePercentage = settings.feePercentage;
   if (settings.profitPercentage) profitPercentage = settings.profitPercentage;
   if (typeof settings.oracleEnabled === 'boolean') oracleEnabled = settings.oracleEnabled;
@@ -213,10 +233,9 @@ function initGridScanner(settings = {}, numItems) {
     return;
   }
 
-  const observer = new MutationObserver((mutations, obs) => {
+  const observer = new MutationObserver(() => {
     if (isGridPage()) {
       scheduleScan();
-      obs.disconnect();
     }
   });
 
