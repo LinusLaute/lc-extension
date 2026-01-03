@@ -177,7 +177,7 @@ async function scanItemList(maxItems) {
     const itemData = extractItemData(item);
     
     if (!itemData) {
-      console.log('  ⚠️ Could not extract data');
+      console.log('⚠️ Could not extract data');
       colorItemBackground(item, 'skip');
       continue;
     }

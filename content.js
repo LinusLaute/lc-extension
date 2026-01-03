@@ -356,21 +356,17 @@ function showError(container, minSell, message, data) {
   `;
 }
 
+
 function insertInfoDiv(infoDiv) {
-  const priceContainer = document.querySelector('.product-price');
-  if (priceContainer) {
-    priceContainer.parentElement.insertBefore(infoDiv, priceContainer.nextSibling);
-  } else {
-    const modal = document.querySelector('.modal-content');
-    if (modal) {
-      const h2 = modal.querySelector('h2');
-      if (h2) {
-        h2.parentElement.insertBefore(infoDiv, h2.nextSibling);
-      } else {
-        modal.prepend(infoDiv);
-      }
-    }
+  // Try to find "Add to cart" button
+  const buyButton = document.querySelector('.btn-buy');
+  
+  if (buyButton) {
+    const buttonContainer = buyButton.parentElement;
+    buttonContainer.insertAdjacentElement('afterend', infoDiv);
+    return;
   }
+  
 }
 
 // Listen for messages from popup to update settings
