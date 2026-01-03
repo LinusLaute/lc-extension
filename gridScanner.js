@@ -3,6 +3,9 @@
 
 console.log('🚀 Grid Scanner loaded');
 
+// Prevent duplicate scans when observing dynamic page changes.
+// We mark the body with `data-grid-scanner-observed` once we've scheduled a scan.
+
 
 // ===== DETECTION =====
 function isGridPage() {
@@ -16,11 +19,18 @@ function extractItemData(itemElement) {
   const skinEl = itemElement.querySelector('.lName.big');
   const wearEl = itemElement.querySelector('.exteriorName');
   const priceEl = itemElement.querySelector('.price.item');
-  
+
+  const souvenirEl = itemElement.querySelector('.badge-wrapper.souvenir');
+  const stattrakEl = itemElement.querySelector('.badge-wrapper.stattrak');
+
   const weapon = weaponEl?.textContent.trim();
   const skin = skinEl?.textContent.trim();
   const wearRaw = wearEl?.textContent.trim();
   const priceRaw = priceEl?.textContent.trim();
+
+  // Check if StatTrak or Souvenir (assigns boolean)
+  const isStatTrak = stattrakEl !== null;
+  const isSouvenir = souvenirEl !== null;
   
   // Parse price
   const priceMatch = priceRaw?.match(/€\s*([0-9,]+\.?\d*)/);
@@ -43,7 +53,9 @@ function extractItemData(itemElement) {
     element: itemElement,
     name: `${weapon} | ${skin}`,
     wear: wear,
-    price: price
+    price: price,
+    isStatTrak: isStatTrak,
+    isSouvenir: isSouvenir
   };
 }
 
@@ -100,7 +112,8 @@ async function calculateItemState(itemData) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: itemData.name,
-        wear: itemData.wear
+        wear: itemData.wear,
+        stattrak: itemData.isStatTrak
       })
     });
     
@@ -164,7 +177,13 @@ async function scanItemList(maxItems) {
     const itemData = extractItemData(item);
     
     if (!itemData) {
-      console.log('  ⚠️ Could not extract data');
+      console.log('⚠️ Could not extract data');
+      colorItemBackground(item, 'skip');
+      continue;
+    }
+
+    if (itemData.isSouvenir) {
+      console.log('⚠️ Souvenir item - SKIP');
       colorItemBackground(item, 'skip');
       continue;
     }
@@ -187,23 +206,43 @@ async function scanItemList(maxItems) {
 // ===== INIT FUNCTION (called from main content.js) =====
 function initGridScanner(settings = {}, numItems) {
   // Update settings if provided
+  if (!oracleEnabled) {
+    console.log('❌ Oracle disabled');
+    return;
+  }
   if (settings.feePercentage) feePercentage = settings.feePercentage;
   if (settings.profitPercentage) profitPercentage = settings.profitPercentage;
   if (typeof settings.oracleEnabled === 'boolean') oracleEnabled = settings.oracleEnabled;
-  
-  console.log('Grid Scanner initialized with settings:', {
-    feePercentage,
-    profitPercentage,
-    oracleEnabled
-  });
-  
-  // Auto-start scan after small delay
-  if (isGridPage()) {
-    console.log('Grid page detected, starting scan in 2s...');
+
+  // Auto-start scan after small delay if grid is present now,
+  // otherwise observe the document for the grid being inserted.
+  const isGrid = isGridPage();
+  console.log('isGrid:', isGrid);
+
+  const scheduleScan = () => {
+    if (document.body.dataset.gridScannerObserved) return;
+    document.body.dataset.gridScannerObserved = '1';
+    console.log('Grid page detected, starting scan in 2s...', numItems);
     setTimeout(() => {
       scanItemList(numItems); // Scan first N items
     }, 2000);
+  };
+
+  if (isGrid) {
+    scheduleScan();
+    return;
   }
+
+  const observer = new MutationObserver(() => {
+    if (isGridPage()) {
+      scheduleScan();
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 }
 
 // ===== EXPORTS (for integration) =====
