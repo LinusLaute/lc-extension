@@ -59,12 +59,12 @@ function extractItemData(itemElement) {
   };
 }
 
-// ===== UI MANIPULATION =====
+// UI MANIPULATION 
 function colorItemBackground(itemElement, type) {
   const offerCard = itemElement.querySelector('.offer-card');
   
   if (!offerCard) {
-    console.log('❌ No offer-card found');
+    console.log('No offer-card found');
     return;
   }
   
@@ -75,19 +75,19 @@ function colorItemBackground(itemElement, type) {
   
   if (type === 'good') {
     // GRÜN - Undervalued / Good Deal
-    offerCard.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%)';
+    offerCard.style.background = 'rgba(34, 197, 94, 0.15)';
     offerCard.style.border = '2px solid rgba(34, 197, 94, 0.4)';
     offerCard.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.2)';
     
   } else if (type === 'bad') {
     // ROT - Overvalued / Bad Deal
-    offerCard.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%)';
+    offerCard.style.background = 'rgba(239, 68, 68, 0.15)';
     offerCard.style.border = '2px solid rgba(239, 68, 68, 0.4)';
     offerCard.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.2)';
     
   } else if (type === 'skip') {
     // GRAU - Skipped / No Data
-    offerCard.style.background = 'linear-gradient(135deg, rgba(156, 163, 175, 0.15) 0%, rgba(107, 114, 128, 0.1) 100%)';
+    offerCard.style.background = 'rgba(156, 163, 175, 0.15)';
     offerCard.style.border = '2px solid rgba(156, 163, 175, 0.3)';
     offerCard.style.boxShadow = '0 4px 12px rgba(156, 163, 175, 0.15)';
   }
@@ -96,7 +96,7 @@ function colorItemBackground(itemElement, type) {
   offerCard.style.transition = 'all 0.3s ease';
 }
 
-// ===== ORACLE ANALYSIS =====
+// ORACLE ANALYSIS 
 async function calculateItemState(itemData) {
   if (!itemData) {
     return 'skip';
@@ -123,19 +123,17 @@ async function calculateItemState(itemData) {
       const marketPrice = oracleData.second_lowest;
       
       if (marketPrice > minSell) {
-        //console.log(`  ✅ GOOD (+€${profit.toFixed(2)})`);
         return 'good';
       } else {
-        //console.log(`  ❌ BAD (${profit.toFixed(2)})`);
         return 'bad';
       }
     }
     
-    console.log('  ⚠️ No data');
+    console.log('No data');
     return 'skip';
     
   } catch (error) {
-    console.error('  ❌ Error:', error.message);
+    console.error('Error:', error.message);
     return 'skip';
   }
 }
@@ -146,18 +144,18 @@ async function scanItemList(maxItems) {
   console.log('=== Starting Grid Scan ===');
   
   if (!isGridPage()) {
-    console.log('❌ Not on grid page');
+    console.log('Not on grid page');
     return;
   }
   
   if (!oracleEnabled) {
-    console.log('❌ Oracle disabled');
+    console.log('Oracle disabled');
     return;
   }
   
   const grid = document.querySelector('ul.grid');
   if (!grid) {
-    console.log('❌ No grid found');
+    console.log('No grid found');
     return;
   }
   
@@ -177,13 +175,13 @@ async function scanItemList(maxItems) {
     const itemData = extractItemData(item);
     
     if (!itemData) {
-      console.log('⚠️ Could not extract data');
+      console.log('Could not extract data');
       colorItemBackground(item, 'skip');
       continue;
     }
 
     if (itemData.isSouvenir) {
-      console.log('⚠️ Souvenir item - SKIP');
+      console.log('Souvenir item - SKIP');
       colorItemBackground(item, 'skip');
       continue;
     }
@@ -207,7 +205,7 @@ async function scanItemList(maxItems) {
 function initGridScanner(settings = {}, numItems) {
   // Update settings if provided
   if (!oracleEnabled) {
-    console.log('❌ Oracle disabled');
+    console.log('Oracle disabled');
     return;
   }
   if (settings.feePercentage) feePercentage = settings.feePercentage;
@@ -253,5 +251,3 @@ if (typeof module !== 'undefined' && module.exports) {
     isGridPage
   };
 }
-
-console.log('✅ Grid Scanner ready');

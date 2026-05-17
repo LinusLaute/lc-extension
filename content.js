@@ -115,7 +115,7 @@ async function addArbitrageInfo() {
     infoDiv.className = 'arb-info-container';
     infoDiv.innerHTML = `
       <div class="arb-header">
-        <span class="arb-title">💰 QUICK CALC</span>
+        <span class="arb-title">QUICK CALC</span>
         <span class="arb-fee">${feePercentage}% Fee</span>
       </div>
       <div class="arb-row arb-highlight">
@@ -142,7 +142,7 @@ async function addArbitrageInfo() {
       <span class="arb-value arb-breakeven">€${minSell.toFixed(2)}</span>
     </div>
     <div class="arb-loading">
-      <span>⏳ Consulting Oracle...</span>
+      <span>Consulting Oracle...</span>
     </div>
   `;
   
@@ -209,7 +209,7 @@ function updateUIMarketOnly(container, buyPrice, data, minSell, details) {
 
   container.innerHTML = `
     <div class="arb-header">
-      <span class="arb-title">${isGoodDeal ? '⚡' : '⚠️'} ORACLE</span>
+      <span class="arb-title">ORACLE</span>
       <span class="arb-fee">${feePercentage}% Fee</span>
     </div>
     
@@ -233,7 +233,7 @@ function updateUIMarketOnly(container, buyPrice, data, minSell, details) {
     </div>
 
     <div class="arb-verdict ${isGoodDeal ? 'good-deal' : 'bad-deal'}">
-      ${isGoodDeal ? '✅ GOOD DEAL' : '❌ OVERPRICED'}
+      ${isGoodDeal ? 'GOOD DEAL' : 'OVERPRICED'}
     </div>
 
     <button class="arb-historic-btn">
@@ -248,7 +248,7 @@ function updateUIMarketOnly(container, buyPrice, data, minSell, details) {
   // Add fetch historic function
   container.fetchHistoric = async function() {
     const btn = this.querySelector('.arb-historic-btn');
-    btn.textContent = '⏳ Loading...';
+    btn.textContent = 'Loading...';
     btn.disabled = true;
     
     try {
@@ -267,10 +267,10 @@ function updateUIMarketOnly(container, buyPrice, data, minSell, details) {
       if (oracleData && !oracleData.error && oracleData.fair_value) {
         updateUIWithFullOracle(this, parseFloat(this.dataset.buyPrice), oracleData, parseFloat(this.dataset.minSell));
       } else {
-        btn.textContent = '❌ No historic data';
+        btn.textContent = 'No historic data';
       }
     } catch (error) {
-      btn.textContent = '❌ Failed';
+      btn.textContent = 'Failed';
     }
   };
 
@@ -293,7 +293,7 @@ function updateUIWithFullOracle(container, buyPrice, data, minSell) {
 
   container.innerHTML = `
     <div class="arb-header">
-      <span class="arb-title">${isGoodDeal ? '🚀' : '⚠️'} ORACLE</span>
+      <span class="arb-title">ORACLE</span>
       <span class="arb-fee">${feePercentage}% Fee</span>
     </div>
     
@@ -323,7 +323,7 @@ function updateUIWithFullOracle(container, buyPrice, data, minSell) {
     </div>
 
     <div class="arb-verdict ${isGoodDeal ? 'good-deal' : 'bad-deal'}">
-      ${isGoodDeal ? '✅ GOOD DEAL' : '❌ OVERPRICED'}
+      ${isGoodDeal ? 'GOOD DEAL' : 'OVERPRICED'}
     </div>
 
     <div class="arb-footer">
